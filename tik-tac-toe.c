@@ -44,70 +44,17 @@ int game(int board[]) {
   return includes(board,0) ? 0.5 : 0;
 }
 
-struct State {
-  signed int score: 3;
-  unsigned int depth: 4;
-};
-
-struct State minmax(int arr[],int depth,int isMax) {
-  int presentScore = game(arr);
-  if (presentScore == 0.5) {
-    int bestScore = isMax ? 3 : -3;
-    int bestDepth = 10;
-    // other posibilites
-    for (int i = 0; i < 9; i++) {
-      if (arr[i] == 0) {
-        arr[i] = isMax ? -1 : 1;
-        struct State state = minmax(arr, depth + 1, isMax ? 0:1);
-        if (isMax ? state.score < bestScore : state.score > bestScore) {
-          bestScore = state.score;
-          bestDepth = state.depth;
-        }
-        arr[i] = 0;
-      }
-    }
-    struct State state = { bestScore, bestDepth };
-    return state;
-  } 
-  struct State state = { presentScore, depth };
-  return state;
-}
-
-int ai(int arr[]) {
-  int bestScore = 4;
-  int bestDepth = 10;
-  int bestMove;
-
-  for (int i = 0; i < 9; i++) {
-    if (arr[i] == 0) {
-      struct State state = minmax(arr, 1, 0);
-      printf("%d - %d,%d\n",i,state.score,state.depth);
-      if (state.score < bestScore || 
-          (bestScore == state.score && bestDepth > state.depth)) {
-        bestScore = state.score;
-        bestDepth = state.depth;
-        bestMove = i;
-      }
-      arr[i] = 0;
-    }
-  }
-  return bestMove;
-}
-
 int main() {
   int board[] = {0,0,0, 0,0,0, 0,0,0};
   draw(board);
   int i,event,turn = 1;
   while(1) {
-
-    if (turn == 1) {
-      printf("%c turn> ", turn > 0 ? 'x': 'o');
-      scanf("%d",&i);
-      if (i > 8 || board[i] != 0) {
-        printf("invalid input.\n");
-        continue;
-      };
-    } else i = ai(board);
+    printf("%c turn> ", turn > 0 ? 'x': 'o');
+    scanf("%d",&i);
+    if (i > 8 || board[i] != 0) {
+      printf("invalid input.\n");
+      continue;
+    };
 
     board[i] = turn;
     event = game(board);
@@ -117,7 +64,7 @@ int main() {
       else printf("%c wins!\n", event > 0 ? 'x': 'o');
       break;
     }
-    if (turn == -1) draw(board);
+    draw(board);
     turn *= -1;
   }
   return 0;
